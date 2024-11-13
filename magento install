@@ -1,0 +1,174 @@
+apt update
+      apt install apache2 -y
+     sudo apt install mysql-server
+     MySQL
+	 alter user 'root'@'localhost' identified with mysql_native_password by 'root123';
+    create database Evomania;
+exit
+ mysql -u root -p
+      add-apt-repository ppa:ondrej/php
+      apt install php8.2 -y
+      apt install php8.2-bz2 php8.2-common php8.2-curl php8.2-gd php8.2-mbstring php8.2-mysql php8.2-xml php8.2-zip php8.2-cli php8.2-common php8.2-mcrypt php8.2-opcache php8.2-phpdbg php8.2-readline phpmyadmin  
+				
+(sudo apt install php8.2 php8.2-cli php8.2-fpm php8.2-common php8.2-mysql php8.2-intl php8.2-xsl php8.2-mbstring php8.2-curl php8.2-gd php8.2-bcmath php8.2-soap php8.2-zip php8.2-dom php8.2-opcache php8.2-iconv php8.2-simplexml php8.2-pdo php8.2-ctype php8.2-tokenizer php8.2-xml php8.2-fileinfo php8.2-imagick)
+    
+     php --version
+     vim /etc/apache2/apache2.conf
+        add (Include /etc/phpmyadmin/apache.conf)
+     
+   28  vim /etc/apache2/mods-enabled/dir.conf  
+   29 sudo systemctl restart apache2
+   30 cd ~
+
+   33  sudo phpenmod mbstring
+   34  sudo a2enmod rewrite
+   35  systemctl reload apache2
+   36  php -i | grep "Configuration File"
+   37  vim /etc/php/8.2/cli/php.ini
+   goto 409 row
+   goto 922 row
+	(max_execution_time=18000
+	max_input_time=1800
+	memory_limit=4G
+ 	uncoment extionsion php packages)
+   38  systemctl reload apache2
+
+
+   39  apt update
+   41  apt install openjdk-17-jdk -y
+   42  java --version
+   43  cd
+   44  apt install curl
+   47  sudo curl -sSfL https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --no-default-keyring --keyring=gnupg-ring:/etc/apt/trusted.gpg.d/magento.gpg --import
+   48  sudo sh -c 'echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" > /etc/apt/sources.list.d/elastic-7.x.list'
+   49  sudo chmod 666 /etc/apt/trusted.gpg.d/magento.gpg
+   50  sudo apt update
+   51  apt install elasticsearch
+   52  systemctl daemon-reload
+   53  systemctl enable elasticsearch.service
+   54  systemctl start elasticsearch.service
+   55  nano /etc/elasticsearch/elasticsearch.yml
+        uncomment (cluster.name: my-application, node.name: node-1, network.host: 192.168.0.1, 			http.port: 9200)
+   56  nano /etc/elasticsearch/jvm.options
+        -vxl1024m
+	    -vxs1024m
+   57  systemctl daemon-reload
+   58  systemctl start elasticsearch.service
+   59  curl -X GET 'http://localhost:9200'
+     
+   61  apt update
+   62  curl -sS https://getcomposer.org/installer -o composer-setup.php
+   63  sudo php composer-setup.php --install-dir=/usr/bin --filename=composer
+   64  composer
+   66  cd /var/www/htmlsudo
+   67  ls
+   68   composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition=2.4.6 Dev-Evomania
+	username: a0a486aa70f4738ffaeb29ab45203c70
+	password: 57ac3eea008cd280182a4cb43fefd53d
+
+
+cd Dev-Evomania/
+   71  sudo find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
+   72  sudo find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+   74  sudo chown -R root:www-data .
+   75  sudo chmod u+x bin/magento
+   76  php bin/magento setup:install --base-url="http://13.200.210.47/" --db-host=localhost --db-name=Evomania --db-user=root --db-password=root123 --admin-firstname=Admin --admin-lastname=Admin --admin-email=admin@gmail.com --admin-user=admin --admin-password=Admin123 --language=en_US --currency=USD --timezone=America/Chicago --backend-frontname=admin --search-engine=elasticsearch7 --elasticsearch-host=localhost --elasticsearch-port=9200
+   77  cd /etc/apache2/
+   78  ls
+   80  cd sites-available/
+   84  nano 000-default.conf
+        (<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/html/magento2/pub
+            ServerName sonal.magento.com
+            ErrorLog ${APACHE_LOG_DIR}/error.log
+            CustomLog ${APACHE_LOG_DIR}/access.log combined
+            <Directory "/var/www/html">
+                AllowOverride all
+            </Directory>
+        
+   85  systemctl restart apache2
+   86  cd /var/www/html/
+   87  php bin/magento c:f && php bin/magento module:disable Magento_TwoFactorAuth Magento_AdminAdobeImsTwoFactorAuth
+   97  sudo a2ensite magento2.local.in.
+   98  cd /var/www/html
+   
+   php bin/magento setup:upgr  
+   php bin/magento setup:di:compile
+   php bin/magento setup:upgrade
+   php bin/magento setup:static-content:deploy
+   php bin/magento setup:db-data:upgrade
+   php bin/magento cache:clean 
+   php bin/magento cache:flush                                        
+Here are some other Magento CLI commands similar to setup:di:compile:
+
+    php bin/magento setup:upgrade
+    php bin/magento setup:static-content:deploy
+        Updates the Magento database schema and data after installing or upgrading modules.
+
+    php bin/magento setup:static-content:deploy
+        Deploys static view files (CSS, JavaScript, images) to make the frontend assets ready for use.
+
+    php bin/magento setup:db-schema:upgrade
+        Only applies database schema changes. Useful if you want to skip data upgrades.
+
+    php bin/magento setup:db-data:upgrade
+        Only applies data updates without modifying the database schema.
+
+    php bin/magento cache:clean
+        Cleans all the cache types enabled in the system.
+
+    php bin/magento cache:flush
+        Flushes the Magento cache storage, useful for clearing all cache types at once.
+
+    php bin/magento setup:uninstall
+        Uninstalls the Magento application (removes database and files).
+
+These commands are commonly used in Magento development and deployment workflows to optimize performance, update systems, or apply changes in various environments.
+
+
+cd /var/www/Dev-Evomania
+composer require geoip2/geoip2
+php bin/magento deploy:mode:set developer
+php bin/magento deploy:mode:set developer
+
+composer dump-autoload
+php bin/magento cache:clean
+php bin/magento cache:flush
+composer update
+composer dump-autoload
+cd app/code/Ecomtech/vendor/onestepcheckout/
+vim GeoService.php
+   namespace Ecomteck\OneStepCheckout\Service;
+
+use GeoIp2\Database\Reader;
+
+class GeoService
+{
+    protected $reader;
+
+    public function __construct()
+    {
+        // Path to your GeoIP2 database file (e.g., GeoLite2-Country.mmdb)
+        $databaseFile = '/path/to/GeoLite2-Country.mmdb';
+        $this->reader = new Reader($databaseFile);
+    }
+
+    public function getCountry($ipAddress)
+    {
+        try {
+            // Get the country based on the IP address
+            $record = $this->reader->country($ipAddress);
+            return $record->country->isoCode; // or $record->country->name
+        } catch (\Exception $e) {
+            // Handle the error (e.g., log it)
+            return null;
+        }
+    }
+}
+ composer require geoip2/geoip2:~2.0
+  $databaseFile
+  cd ../../..
+  php bin/magento cache:clean
+php bin/magento cache:flush
+systemctl restart apache2
